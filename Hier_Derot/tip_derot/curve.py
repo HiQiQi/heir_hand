@@ -3,8 +3,8 @@ __author__ = 'QiYE'
 import numpy
 import cPickle
 import matplotlib.pyplot as plt
-save_path =  '../../../data/msrc/hier_derot/tip/'
-model_save_path = "%sparam_cost_tip20_offset_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm400_yt5_ep180.npy"%save_path
+save_path =  'C:/Proj/Proj_CNN_Hier/data/icvl/hier_derot/tip/'
+model_save_path = "%sparam_cost_offset_tip8_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm100_yt5_ep600.npy"%save_path
 model_info = numpy.load(model_save_path)
 # model_save_path2 = "%sparam_cost_base_wrist_r012_uvd_21jnts_derot_lg0_patch56_c0016_c0132_c1016_c1132_c2016_c2132_h14_h216_gm0_lm10000_yt0_ep1000.npy"%save_path
 # model_info2 = numpy.load(model_save_path2)
@@ -39,8 +39,8 @@ plt.ylim(ymin=0.1,ymax=1)
 plt.xlim(xmin=1,xmax=x_axis)
 plt.plot(numpy.arange(1,x_axis,1),train_cost[0:x_axis-1,], 'blue')
 plt.plot(numpy.arange(1,x_axis,1),test_cost[0:x_axis-1,], 'red')
-# plt.xscale('log')
-# plt.yscale('log')
+plt.xscale('log')
+plt.yscale('log')
 plt.grid('on','minor')
 plt.tick_params(which='minor' )
 

@@ -4,13 +4,16 @@ import numpy
 import cPickle
 import matplotlib.pyplot as plt
 # save_path = '../../../data/nyu/base_wrist/'
-save_path = '../../../data/msrc/hier_derot_recur/bw_initial/'
-model_save_path = "%sparam_cost_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1235.npy"%save_path
+save_path = '../../../data/msrc/hier_derot_recur/bw_initial/best/'
+model_save_path = "%sparam_cost_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1500.npy"%save_path
 
 model_info = numpy.load(model_save_path)
+print model_info[1]
+
 train_cost = numpy.array(model_info[-2][1:-1])
 test_cost = numpy.array(model_info[-1][1:-1])
-
+for i in xrange(0,train_cost.shape[0],1):
+    print'ep',i+1,'test cost ',test_cost[i], 'train cost ',train_cost[i]
 
 print 'train cost...', numpy.min(train_cost),numpy.max(train_cost)
 print 'test cost...' ,numpy.min(test_cost),numpy.max(test_cost)

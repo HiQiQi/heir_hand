@@ -12,7 +12,7 @@ from src.Model.Train import update_params2,set_params
 
 def train_model(setname, dataset_path_prefix,source_name,batch_size,lamda,c1,c2,h1_out_factor,h2_out_factor):
 
-    model_info='center_r0r1r2_uvd'
+    model_info='uvd_center_r0r1r2'
     print model_info, constants.OUT_DIM
 
     dataset = 'train'
@@ -74,7 +74,7 @@ def train_model(setname, dataset_path_prefix,source_name,batch_size,lamda,c1,c2,
     gamma = 0.0
     yita = 0.00000
     save_path =  '%sdata/%s/hier_derot/center/'%(dataset_path_prefix,setname)
-    model_save_path = "%sparam_cost_center_r0r1r2_uvd_c0016_c0132_c1016_c1132_c2016_c2132_h16_h216_gm0_lm300_yt0_ep765.npy"%save_path
+    model_save_path = "%sparam_cost_center_r0r1r2_uvd_c0016_c0132_c1016_c1132_c2016_c2132_h16_h216_gm0_lm300_yt0_ep1930.npy"%save_path
     set_params(model_save_path, model.params)
     # Convert the learning rate into a shared variable to adapte the learning rate during training.
     learning_rate = theano.shared(numpy.cast[theano.config.floatX](lamda) )
@@ -98,7 +98,7 @@ def train_model(setname, dataset_path_prefix,source_name,batch_size,lamda,c1,c2,
 
 
     n_epochs =2500
-    epoch =765
+    epoch =1930
     test_cost=[]
     train_cost=[]
     done_looping=False

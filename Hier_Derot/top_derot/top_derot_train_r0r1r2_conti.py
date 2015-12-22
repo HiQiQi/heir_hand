@@ -7,7 +7,7 @@ import theano.tensor as T
 import numpy
 from load_data import  load_data_multi_top_uvd_normalized
 from src.Model.CNN_Model import CNN_Model_multi3
-from src.Model.Train import update_params2
+from src.Model.Train import update_params2,set_params
 
 
 def train_model(setname, dataset_path_prefix,source_name,prev_jnt_name,batch_size,jnt_idx,patch_size,offset_depth_range,c1,c2,h1_out_factor,h2_out_factor,lamda):
@@ -102,6 +102,10 @@ def train_model(setname, dataset_path_prefix,source_name,prev_jnt_name,batch_siz
     test_model = theano.function(inputs=[X0,X1,X2,is_train,Y],
         outputs=cost,on_unused_input='ignore')
 
+    # save_path =   '%sdata/%s/hier_derot/top/best/'%(dataset_path_prefix,setname)
+    # model_save_path = "%sparam_cost_offset_top7_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep465.npy"%(save_path)
+    # print model_save_path
+    # set_params(model_save_path, model.params)
 
     n_epochs =1000
     epoch = 0
@@ -158,7 +162,7 @@ if __name__ == '__main__':
     mid_jnt_name.append('_absuvd0_mid10_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep385')
     mid_jnt_name.append('_absuvd0_mid14_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep395')
     mid_jnt_name.append('_absuvd0_mid18_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep605')
-    idx =3
+    idx =7
      # jnt_idx = [0,1,5,9 ,13,17]
     # jnt_idx = [2,6,10 ,14,18]
     # jnt_idx = [3,7,11,15,19]
@@ -166,7 +170,7 @@ if __name__ == '__main__':
                 dataset_path_prefix=constants.Data_Path,
                 source_name='_icvl_derot_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
                 prev_jnt_name=mid_jnt_name[(idx-3)/4],
-                lamda = 0.002,
+                lamda = 0.003,
                 batch_size = 100,
                 jnt_idx = [idx],
                 patch_size=40,

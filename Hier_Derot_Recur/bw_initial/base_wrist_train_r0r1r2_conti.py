@@ -3,19 +3,18 @@ __author__ = 'QiYE'
 import theano
 import theano.tensor as T
 import numpy
-
 from load_data import  load_data_multi
 from src.Model.CNN_Model import CNN_Model_multi3,CNN_Model_multi3_conv3
-from src.Model.Train import update_params2
-
-
-def train_model_conv3(setname, source_name,batch_size,jnt_idx,c1,c2,c3,h1_out_factor,h2_out_factor,lamda):
+from src.Model.Train import update_params,get_gradients,update_params2,set_params
+import time
+from src.utils import constants
+def train_model_conv3(setname, dataset_path_prefix,source_name,batch_size,jnt_idx,c1,c2,c3,h1_out_factor,h2_out_factor,lamda):
     model_info='uvd_bw_r012_21jnts'
     print model_info
-
+    src_path = '%sdata/%s/source/'%(dataset_path_prefix,setname)
     dataset = 'train'
-    src_path = '../../../data/%s/source/'%setname
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
+
 
     train_set_x0, train_set_x1,train_set_x2,train_set_y= load_data_multi(path,is_shuffle=True, jnt_idx=jnt_idx)
     n_train_batches = train_set_x0.shape[0]/ batch_size
@@ -26,6 +25,7 @@ def train_model_conv3(setname, source_name,batch_size,jnt_idx,c1,c2,c3,h1_out_fa
 
     dataset = 'test'
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
+
     test_set_x0, test_set_x1,test_set_x2,test_set_y= load_data_multi(path,is_shuffle=True, jnt_idx=jnt_idx)
     n_test_batches = test_set_x0.shape[0]/ batch_size
     print 'n_test_batches', n_test_batches
@@ -98,10 +98,10 @@ def train_model_conv3(setname, source_name,batch_size,jnt_idx,c1,c2,c3,h1_out_fa
     # updates = update_params(model.params,grads,gamma=gamma,yita=yita,lamda=lamda)
     updates = update_params2(model,cost,momentum=momentum,learning_rate=learning_rate)
     #
-    # save_path = '../../../data/%s/hier_derot_recur/bw_initial/best/'%setname
-    # model_save_path = "%sparam_cost_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1500.npy"%save_path
-    # set_params(model_save_path, model.params)
-
+    save_path =   '%sdata/%s/hier_derot_recur/bw_initial/best/'%(dataset_path_prefix,setname)
+    model_save_path = "%sparam_cost_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep2380.npy"%(save_path)
+    print model_save_path
+    set_params(model_save_path, model.params)
 
     print 'gamma_%f, lamda_%f,yita_%f'%(gamma, lamda,yita)
 
@@ -112,12 +112,12 @@ def train_model_conv3(setname, source_name,batch_size,jnt_idx,c1,c2,c3,h1_out_fa
 
 
     n_epochs =2500
-    epoch = 00
+    epoch = 2380
     test_cost=[]
     train_cost=[]
 
     done_looping=False
-    save_path =    '../../../data/%s/hier_derot_recur/bw_initial/'%setname
+    save_path =  '%sdata/%s/hier_derot_recur/bw_initial/best/'%(dataset_path_prefix,setname)
     drop = numpy.cast['int32'](0)
     print 'dropout', drop
 
@@ -168,12 +168,12 @@ def train_model_conv3(setname, source_name,batch_size,jnt_idx,c1,c2,c3,h1_out_fa
     if epoch == n_epochs:
         model.save(path=save_path,c00=c1,c01=c2,c10=c1,c11=c2,c20=c1,c21=c2,h1_out_factor=h1_out_factor,h2_out_factor=h2_out_factor,gamma=momentum.get_value()*10000,lamda=learning_rate.get_value()*1000000,yita=yita*1000,epoch=epoch,
                    train_cost=train_cost,test_cost=test_cost)
-def train_model(setname, source_name,batch_size,jnt_idx,c1,c2,h1_out_factor,h2_out_factor,lamda):
+def train_model(setname, dataset_path_prefix,source_name,batch_size,jnt_idx,c1,c2,h1_out_factor,h2_out_factor,lamda):
     model_info='uvd_bw_r012_21jnts_conv2'
     print model_info
 
     dataset = 'train'
-    src_path = '../../../data/%s/source/'%setname
+    src_path = '%sdata/%s/source/'%(dataset_path_prefix,setname)
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
 
     train_set_x0, train_set_x1,train_set_x2,train_set_y= load_data_multi(path,is_shuffle=True, jnt_idx=jnt_idx)
@@ -184,7 +184,9 @@ def train_model(setname, source_name,batch_size,jnt_idx,c1,c2,h1_out_factor,h2_o
     print 'n_train_batches', n_train_batches
 
     dataset = 'test'
+    src_path = '%sdata/%s/source/'%(dataset_path_prefix,setname)
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
+
     test_set_x0, test_set_x1,test_set_x2,test_set_y= load_data_multi(path,is_shuffle=True, jnt_idx=jnt_idx)
     n_test_batches = test_set_x0.shape[0]/ batch_size
     print 'n_test_batches', n_test_batches
@@ -249,11 +251,10 @@ def train_model(setname, source_name,batch_size,jnt_idx,c1,c2,h1_out_factor,h2_o
     # grads = get_gradients(model, cost)
     # updates = update_params(model.params,grads,gamma=gamma,yita=yita,lamda=lamda)
     updates = update_params2(model,cost,momentum=momentum,learning_rate=learning_rate)
-
-    # save_path = '../../data/msrc_r0r1r2_21jnts_u72v72d300_20151030/base_wrist_derot_spacial/best/'
-    # model_save_path = "%sparam_cost_base_wrist_r0r1r2_uvd_21jnts_derot_lg0_patch64_c0016_c0132_c1016_c1132_c2016_c2132_h14_h216_gm0_lm10000_yt0_ep700.npy"%save_path
-    # set_params(model_save_path, model.params)
-
+    save_path =   '%sdata/%s/hier_derot_recur/bw_initial/best/'%(dataset_path_prefix,setname)
+    model_save_path = "%sparam_cost_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep2380.npy"%(save_path)
+    print model_save_path
+    set_params(model_save_path, model.params)
 
     print 'gamma_%f, lamda_%f,yita_%f'%(gamma, lamda,yita)
 
@@ -263,8 +264,8 @@ def train_model(setname, source_name,batch_size,jnt_idx,c1,c2,h1_out_factor,h2_o
         outputs=cost,on_unused_input='ignore')
 
 
-    n_epochs =2500
-    epoch = 960
+    n_epochs =3000
+    epoch = 2380
     test_cost=[]
     train_cost=[]
 
@@ -342,21 +343,22 @@ if __name__ == '__main__':
     #             c3=48,
     #             h1_out_factor=2,
     #             h2_out_factor=4)
-
+    #
     # train_model_conv3(setname='msrc',
     #             source_name='_msrc_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300',
-    #             lamda = 0.001,
+    #             lamda = 0.002,
     #             batch_size = 100,
     #             jnt_idx = [0,1,5,9 ,13,17],
     #             c1=16,
     #             c2=32,
-    #             c3=48,
+    #             c3=64,
     #             h1_out_factor=2,
     #             h2_out_factor=4)
-
+    #
     train_model_conv3(setname='icvl',
-                source_name='_icvl_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
-                lamda = 0.002,
+                     dataset_path_prefix=constants.Data_Path,
+            source_name='_icvl_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
+                lamda=0.002,
                 batch_size = 100,
                 jnt_idx = [0,1,5,9 ,13,17],
                 c1=16,

@@ -3,21 +3,20 @@ __author__ = 'QiYE'
 import theano
 import theano.tensor as T
 import numpy
-
 from load_data import  load_data_multi
-from src.Model.CNN_Model import CNN_Model_multi3_conv1
-from src.Model.Train import update_params,get_gradients
-
-
+from src.hier_test_files.CNN_Model import CNN_Model_multi3_conv1
+from src.hier_test_files.Train import update_params,get_gradients,update_params2,set_params
+import time
+from src import constants
 def train_model(setname, source_name,batch_size,jnt_idx,c1,h1_out_factor,h2_out_factor,lamda):
 
-    model_info='uvd_bw%s_r012_egoff'%jnt_idx[0]
+    model_info='uvd_bw%s_r012_egoff2'%jnt_idx[0]
     print model_info
 
     dataset = 'train'
-    src_path = '../../../data/%s/hier_derot_recur/bw_initial/best/'%setname
+    src_path = '../../../data/%s/hier_derot_recur/bw_offset/best/'%setname
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
-
+    print 'source path',path
 
     train_set_x0, train_set_x1,train_set_x2,train_set_y= load_data_multi(path=path,is_shuffle=True,
                                                                                              jnt_idx=jnt_idx)
@@ -159,34 +158,31 @@ def train_model(setname, source_name,batch_size,jnt_idx,c1,h1_out_factor,h2_out_
 
 
 if __name__ == '__main__':
-
-    # train_model(setname='nyu',
-    #             source_name='_nyu_updrot_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
-    #             lamda = 0.006,
-    #             batch_size = 100,
-    #             jnt_idx = [0],
-    #                 c1=8,
-    #             c2=16,
-    #             patch_size=24,
-    #             offset_depth_range=0.3,
-    #             h1_out_factor=2,
-    #             h2_out_factor=4)
-
-    # train_model(setname='nyu',
-    #             source_name='_recur1_patch_uvd_derot_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm3000_yt0_ep815',
+    # train_model(setname='msrc',
+    #             source_name='_iter2_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1500',
     #             lamda = 0.003,
     #             batch_size = 100,
-    #             jnt_idx = [0],
+    #             jnt_idx = [4],
     #                 c1=64,
     #             h1_out_factor=1,
-    #             h2_out_factor=1)
+    #             h2_out_factor=2)
 
 
-    train_model(setname='icvl',
-                source_name='_recur1_patch_uvd_derot_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep2380',
-                lamda = 0.001,
+    train_model(setname='nyu',
+                source_name='_iter1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
+                lamda = 0.01,
                 batch_size = 100,
-                jnt_idx = [5],
+                jnt_idx = [4],
                     c1=64,
-                h1_out_factor=2,
+                h1_out_factor=1,
                 h2_out_factor=2)
+
+
+    # train_model(setname='icvl',
+    #             source_name='_recur1_patch_uvd_derot_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep2380',
+    #             lamda = 0.001,
+    #             batch_size = 100,
+    #             jnt_idx = [5],
+    #                 c1=64,
+    #             h1_out_factor=2,
+    #             h2_out_factor=2)

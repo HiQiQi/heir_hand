@@ -29,7 +29,7 @@ def offset_to_abs(off_uvd, pre_uvd,patch_size=44,offset_depth_range=1.0,hand_wid
 
 
 
-def derot_err_uvd_xyz(setname,source_name,source_name_ori,dataset,uvd_pred_offset_path,jnt_idx ):
+def derot_err_uvd_xyz(setname,source_name,source_name_ori,dataset,uvd_pred_offset_path,jnt_idx,pred_save_name ):
 
     src_path = '../../../data/%s/hier_derot_recur/bw_initial/best/'%setname
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
@@ -77,7 +77,7 @@ def derot_err_uvd_xyz(setname,source_name,source_name_ori,dataset,uvd_pred_offse
     err = numpy.mean(numpy.sqrt(numpy.sum((gr_offset)**2,axis=-1)),axis=0)
     print 'err bf upd', err
 
-    direct =  '../../../data/%s/hier_derot_recur/bw_offset/'%setname
+    direct =  '../../../data/%s/hier_derot_recur/bw_offset/best/'%setname
     uvd_pred_offset =  numpy.load("%s%s%s.npy"%(direct,dataset,uvd_pred_offset_path))/10.0
     print uvd_pred_offset.shape
 
@@ -88,8 +88,9 @@ def derot_err_uvd_xyz(setname,source_name,source_name_ori,dataset,uvd_pred_offse
     predict_uvd=uvd_pred_offset+prev_jnt_uvd_derot
     print predict_uvd.shape
     err = numpy.mean(numpy.sqrt(numpy.sum((gr_jnt_uvd_derot -predict_uvd )**2,axis=-1)),axis=0)
-    print 'arr af upd', err
-    # numpy.save("%s%s_abs_base_wrist_r0r1r2_uvd_21jnts_derot_lg3_c0016_c0132_c1016_c1132_c2016_c2132_h16_h212_gm0_lm1000_yt5_ep295.npy"%(direct,dataset),predict_uvd)
+    direct ='../../../data/%s/hier_derot_recur/final_xyz_uvd/'%setname
+    numpy.save("%s%s_absuvd0%s.npy"%(direct,dataset,pred_save_name),predict_uvd)
+
     """"rot the the norm view to original rotatioin view"""
     for i in xrange(uvd_gr.shape[0]):
         M = cv2.getRotationMatrix2D((48,48),rot[i],1)
@@ -104,25 +105,84 @@ def derot_err_uvd_xyz(setname,source_name,source_name_ori,dataset,uvd_pred_offse
     err = numpy.mean(numpy.sqrt(numpy.sum((numpy.squeeze(uvd_gr[:,jnt_idx,:]) -predict_uvd )**2,axis=-1)),axis=0)
     print err
     xyz_pred = err_in_ori_xyz(setname,predict_uvd,uvd_gr,xyz_true,roixy,rect_d1d2w,depth_dmin_dmax,orig_pad_border,jnt_type=None,jnt_idx=jnt_idx)
-    # direct = '../../data/final_xyz_center_wrist_base/msrc_r0r1r2_21jnts_u72v72d300_20151030/'
-    # numpy.save("%s%s_base_wrist_r0r1r2_xyz_21jnts_derot_lg3_c0016_c0132_c1016_c1132_c2016_c2132_h16_h212_gm0_lm1000_yt5_ep295.npy"%(direct,dataset),xyz_pred)
-
+    direct = '../../../data/%s/hier_derot_recur/final_xyz_uvd/'%setname
+    numpy.save("%s%s_xyz%s.npy"%(direct,dataset,pred_save_name),xyz_pred)
+    numpy.save("%s%s_absuvd%s.npy"%(direct,dataset,pred_save_name),predict_uvd)
 
 if __name__=='__main__':
-
+    # jnt_idx = 0,1,5,9,13,17
     # derot_err_uvd_xyz(setname='nyu',
     #                              dataset='test',
-    #                          source_name='_recur1_patch_uvd_derot_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm3000_yt0_ep815',
+    #                          source_name='_recur1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
     #                          source_name_ori='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
-    #                              uvd_pred_offset_path='_uvd_bw0_r012_egoff_c0064_h11_h21_gm0_lm3000_yt0_ep655',
+    #                              uvd_pred_offset_path='_uvd_bw1_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep655',
+    #                              pred_save_name='_iter1_bw1_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep655',
+    #                              jnt_idx = [1])
+
+
+    # derot_err_uvd_xyz(setname='icvl',
+    #                              dataset='test',
+    #                          source_name='_recur1_patch_uvd_derot_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep2380',
+    #                          source_name_ori='_icvl_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
+    #                              uvd_pred_offset_path='_uvd_bw3_r012_egoff_c0032_h11_h22_gm0_lm1000_yt0_ep190',
+    #                              jnt_idx = [9])
+    # jnt_idx = 0,1,5,9,13,17
+
+
+    # derot_err_uvd_xyz(setname='msrc',
+    #                              dataset='test',
+    #                          source_name='_recur1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1500',
+    #                          source_name_ori='_msrc_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300',
+    #                              uvd_pred_offset_path='_uvd_bw0_r012_egoff_c0064_h11_h22_gm0_lm3000_yt0_ep155',
     #                              jnt_idx = [0])
 
 
-    derot_err_uvd_xyz(setname='icvl',
+
+
+
+    # # jnt_idx = 0,1,5,9,13,17
+    # derot_err_uvd_xyz(setname='nyu',
+    #                              dataset='test',
+    #                          source_name='_recur1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
+    #                          source_name_ori='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
+    #                              uvd_pred_offset_path='_uvd_bw0_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep610',
+    #                              pred_save_name='_iter1_bw0_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep610',
+    #                              jnt_idx = [0])
+    # derot_err_uvd_xyz(setname='nyu',
+    #                              dataset='test',
+    #                          source_name='_recur1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
+    #                          source_name_ori='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
+    #                              uvd_pred_offset_path='_uvd_bw1_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep655',
+    #                              pred_save_name='_iter1_bw1_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep655',
+    #                              jnt_idx = [1])
+
+    derot_err_uvd_xyz(setname='nyu',
                                  dataset='test',
-                             source_name='_recur1_patch_uvd_derot_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep2380',
-                             source_name_ori='_icvl_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
-                                 uvd_pred_offset_path='_uvd_bw5_r012_egoff_c0032_h11_h22_gm0_lm1000_yt0_ep275',
-                                 jnt_idx = [17])
-    # jnt_idx = 0,1,5,9,13,17
+                             source_name='_recur1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
+                             source_name_ori='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
+                                 uvd_pred_offset_path='_uvd_bw2_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep450',
+                                 pred_save_name='_iter1_bw2_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep450',
+                                 jnt_idx = [5])
+    derot_err_uvd_xyz(setname='nyu',
+                                 dataset='test',
+                             source_name='_recur1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
+                             source_name_ori='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
+                                 uvd_pred_offset_path='_uvd_bw3_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep405',
+                                 pred_save_name='_iter1_bw3_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep405',
+                                 jnt_idx = [9])
+    derot_err_uvd_xyz(setname='nyu',
+                                 dataset='test',
+                             source_name='_recur1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
+                             source_name_ori='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
+                                 uvd_pred_offset_path='_uvd_bw4_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep450',
+                                 pred_save_name='_iter1_bw4_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep450',
+                                 jnt_idx = [13])
+    # derot_err_uvd_xyz(setname='nyu',
+    #                              dataset='train',
+    #                          source_name='_recur1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
+    #                          source_name_ori='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
+    #                              uvd_pred_offset_path='_uvd_bw5_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep440',
+    #                              pred_save_name='_iter1_bw5_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep440',
+    #                              jnt_idx = [17])
+
 

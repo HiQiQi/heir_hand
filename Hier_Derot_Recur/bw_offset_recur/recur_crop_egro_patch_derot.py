@@ -2,13 +2,14 @@ import h5py
 import theano
 import theano.tensor as T
 import numpy
-from load_data import  load_data_multi
+from load_data import  load_data_multi_initial,load_result_iter1
 from src.hier_test_files.CNN_Model import CNN_Model_multi3,CNN_Model_multi3_conv3
 from src.hier_test_files.Train import update_params,get_gradients,update_params2,set_params
 from src.utils.crop_patch_norm_offset import crop_bw_ego_conv_patch
-from src.utils.rotation import recur_derot
+from src.utils.rotation import recur_derot,get_rot
 import time
 from src import constants
+
 import matplotlib.pyplot as plt
 def show_img_loc(img,pred_uvd,gr_uvd):
     img_size=img.shape[-1]
@@ -29,7 +30,7 @@ def crop_conv3(patch_size,dataset,setname, source_name,batch_size,jnt_idx,
     src_path = '../../../data/%s/source/'%setname
 
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
-    test_set_x0, test_set_x1,test_set_x2,test_set_y= load_data_multi(path,is_shuffle=False, jnt_idx=jnt_idx)
+    test_set_x0, test_set_x1,test_set_x2,test_set_y= load_data_multi_initial(path,is_shuffle=False, jnt_idx=jnt_idx)
 
     img_size_0 = test_set_x0.shape[2]
     img_size_1 = test_set_x1.shape[2]
@@ -102,6 +103,17 @@ def crop_conv3(patch_size,dataset,setname, source_name,batch_size,jnt_idx,
     gr_uvd_derot = numpy.empty_like(test_set_y)
     pred_uvd = numpy.empty_like(test_set_y)
 
+    absuvd_path = '../../../data/%s/hier_derot_recur/final_xyz_uvd/%s'%(setname,dataset)
+    load_result_iter1(absuvd_path,pred_uvd)
+    print test_set_y.shape
+    pred_rot_iter2=get_rot(pred_uvd.reshape(pred_uvd.shape[0],6,3),0,3)
+    gr_rot = get_rot(test_set_y.reshape(pred_uvd.shape[0],6,3),0,3)
+    upd_gr_err_iter2 = numpy.abs(pred_rot_iter2-gr_rot).mean()
+    print 'rot err',upd_gr_err_iter2
+    err_uvd = numpy.mean(numpy.sqrt(numpy.sum((pred_uvd.reshape(pred_uvd.shape[0],6, 3) -test_set_y.reshape(pred_uvd.shape[0],6,3))**2,axis=-1)),axis=0)
+    print 'uvd in ori uvd',err_uvd
+
+
     patch00 = numpy.empty((6,test_set_y.shape[0],c1,patch_size,patch_size),dtype='float32')
     patch10 = numpy.empty((6,test_set_y.shape[0],c1,patch_size,patch_size),dtype='float32')
     patch20 = numpy.empty((6,test_set_y.shape[0],c1,patch_size/2,patch_size/2),dtype='float32')
@@ -116,7 +128,7 @@ def crop_conv3(patch_size,dataset,setname, source_name,batch_size,jnt_idx,
         cost_ij, c00_out,c10_out,c20_out,pred_uvd_batch = test_model(x0,x1,x2,numpy.cast['int32'](0), y)
 
         rot_batch,pred_uvd_derot_batch, gr_uvd_derot_batch,pred_patch_center,gr_patch_center = recur_derot(c00_out,
-                                                               c10_out,c20_out,pred_uvd=pred_uvd_batch.reshape(batch_size,6,3),gr_uvd=y.reshape(batch_size,6,3),batch_size=batch_size)
+                                                               c10_out,c20_out,pred_uvd=pred_uvd[slice_idx].reshape(batch_size,6,3),gr_uvd=y.reshape(batch_size,6,3),batch_size=batch_size)
 
         # show_img_loc(c00_out,pred_patch_center[0],gr_patch_center[0])
         # show_img_loc(c20_out,pred_patch_center[2],gr_patch_center[2])
@@ -125,7 +137,6 @@ def crop_conv3(patch_size,dataset,setname, source_name,batch_size,jnt_idx,
 
         patch00_tmp, patch10_tmp, pathc20_tmp = crop_bw_ego_conv_patch(c00_out,c10_out,c20_out,pred_patch_center,patch_size=8)
 
-        pred_uvd[slice_idx] = pred_uvd_batch
         rotation[slice_idx]=rot_batch
         patch00[:,slice_idx,:,:,:] = patch00_tmp
         patch10[:,slice_idx,:,:,:] = patch10_tmp
@@ -162,7 +173,7 @@ def crop_conv3(patch_size,dataset,setname, source_name,batch_size,jnt_idx,
     print test_set_y[loc]
 
     print 'cost', cost_nbatch/n_test_batches
-    save_path = '../../../data/%s/hier_derot_recur/bw_initial/best/'%setname
+    save_path = '../../../data/%s/hier_derot_recur/bw_offset/best/'%setname
     path = "%s%s%s.h5"%(save_path,dataset,offset_save_path)
     f_shf = h5py.File(path,'w')
     f_shf.create_dataset('patch00',data=patch00)
@@ -179,34 +190,34 @@ def crop_conv3(patch_size,dataset,setname, source_name,batch_size,jnt_idx,
 
 if __name__ == '__main__':
 
-    crop_conv3(patch_size=8,
-               dataset='train',
-                     setname='msrc',
-            source_name='_msrc_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300',
-                batch_size =100 ,
-                jnt_idx = [0,1,5,9 ,13,17],
-                c1=16,
-                c2=32,
-                c3=64,
-                h1_out_factor=2,
-                h2_out_factor=4,
-                offset_save_path='_recur1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1500',
-                model_path='param_cost_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1500')
-
-    #
     # crop_conv3(patch_size=8,
-    #            dataset='test',
-    #                  setname='nyu',
-    #         source_name='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
-    #             batch_size =8 ,
+    #            dataset='train',
+    #                  setname='msrc',
+    #         source_name='_msrc_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300',
+    #             batch_size =100 ,
     #             jnt_idx = [0,1,5,9 ,13,17],
     #             c1=16,
     #             c2=32,
-    #             c3=48,
+    #             c3=64,
     #             h1_out_factor=2,
     #             h2_out_factor=4,
-    #             offset_save_path='_recur1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
-    #             model_path='param_cost_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020')
+    #             offset_save_path='_iter2_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1500',
+    #             model_path='param_cost_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1500')
+
+
+    crop_conv3(patch_size=8,
+               dataset='train',
+                     setname='nyu',
+            source_name='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
+                batch_size =8,
+                jnt_idx = [0,1,5,9 ,13,17],
+                c1=16,
+                c2=32,
+                c3=48,
+                h1_out_factor=2,
+                h2_out_factor=4,
+                offset_save_path='_iter1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
+                model_path='param_cost_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020')
 
 
     # crop_conv3(patch_size=8,

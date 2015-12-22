@@ -3,12 +3,11 @@ __author__ = 'QiYE'
 import theano
 import theano.tensor as T
 import numpy
-
 from load_data import  load_data_r012_ego_offset
-from src.Model.CNN_Model import CNN_Model_multi3
-from src.Model.Train import update_params2
-
-
+from src.hier_test_files.CNN_Model import CNN_Model_multi3
+from src.hier_test_files.Train import update_params,get_gradients,update_params2,set_params
+import time
+from src import constants
 def train_model(setname, source_name,batch_size,jnt_idx,patch_size,offset_depth_range,c1,c2,h1_out_factor,h2_out_factor,lamda):
 
 

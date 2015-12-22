@@ -97,7 +97,7 @@ if __name__=='__main__':
 
 
 
-    idx = 7
+    idx = 3
     top_derot_err_uvd_xyz(dataset='train',
                setname='icvl',
             dataset_path_prefix=constants.Data_Path,
@@ -107,8 +107,8 @@ if __name__=='__main__':
                 patch_size=40,
                 offset_depth_range=0.4,
                prev_jnt_name=mid_jnt_name[(idx-3)/4],
-                         uvd_pred_offset_path = '_offset_top7_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep465',
-                         final_save_name='_top7_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep465')
+                         uvd_pred_offset_path = '_offset_top3_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep205',
+                         final_save_name='_top3_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep205')
 
 
 

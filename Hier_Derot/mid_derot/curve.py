@@ -4,7 +4,7 @@ import numpy
 import cPickle
 import matplotlib.pyplot as plt
 save_path = 'C:/Proj/Proj_CNN_Hier/data/icvl/hier_derot/mid/'
-model_save_path = "%sparam_cost_offset_mid2_r012_21jnts_derot_lg0_patch40_dp0.6_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep135.npy"%save_path
+model_save_path = "%sparam_cost_offset_mid6_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep1855.npy"%save_path
 model_info = numpy.load(model_save_path)
 # model_save_path2 = "%sparam_cost_base_wrist_r012_uvd_21jnts_derot_lg0_patch56_c0016_c0132_c1016_c1132_c2016_c2132_h14_h216_gm0_lm10000_yt0_ep1000.npy"%save_path
 # model_info2 = numpy.load(model_save_path2)

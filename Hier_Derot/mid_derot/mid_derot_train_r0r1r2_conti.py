@@ -14,7 +14,7 @@ def train_model(setname, dataset_path_prefix,source_name,prev_jnt_name,batch_siz
 
     num_enlarge=0
     print 'offset_depth_range ',offset_depth_range
-    model_info='offset_mid%d_r012_21jnts_derot_lg%d_patch%d_dp0.6'%(jnt_idx[0],num_enlarge,patch_size)
+    model_info='offset_mid%d_r012_21jnts_derot_lg%d_patch%d'%(jnt_idx[0],num_enlarge,patch_size)
     print model_info, constants.OUT_DIM
 
     dataset = 'train'
@@ -301,11 +301,11 @@ if __name__ == '__main__':
                 dataset_path_prefix='C:/Proj/Proj_CNN_Hier/',
                 source_name='_icvl_derot_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
                 prev_jnt_name='_absuvd0_bw_r012_21jnts_derot_lg0_patch56_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm9999_yt0_ep1935',
-                lamda = 0.003,
+                lamda = 0.001,
                 batch_size = 100,
-                jnt_idx = [6],
+                jnt_idx = [2],
                 patch_size=40,
-                offset_depth_range=0.6,
+                offset_depth_range=0.4,
                 c1=14,
                 c2=28,
                 h1_out_factor=2,

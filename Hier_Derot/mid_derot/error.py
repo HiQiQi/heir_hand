@@ -95,13 +95,13 @@ if __name__=='__main__':
     mid_derot_err_uvd_xyz(dataset='test',
                           setname='icvl',
                           dataset_path_prefix='C:/Proj/Proj_CNN_Hier/',
-                             source_name='_icvl_derot_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
+                             source_name='_icvl_derot2_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
                              source_name_ori='_icvl_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
                              prev_jnt_name='_absuvd0_bw_r012_21jnts_derot_lg0_patch56_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm9999_yt0_ep1935',
-                                 pred_save_name='_mid14_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep395',
+                                 pred_save_name='_mid2_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep160',
                                  patch_size=40,
                                  offset_depth_range=0.4,
-                                 jnt_idx = [14])
+                                 jnt_idx = [2])
 
 
     #

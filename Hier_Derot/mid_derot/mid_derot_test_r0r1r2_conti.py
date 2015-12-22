@@ -110,20 +110,20 @@ if __name__ == '__main__':
     #                      model_save_path = 'param_cost_offset_mid18_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep605',
     #                      offset_save_path = '_offset_mid18_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep605' )
 
-    test_model(dataset='train',setname='icvl',
+    test_model(dataset='test',setname='icvl',
                dataset_path_prefix='C:/Proj/Proj_CNN_Hier/',
                 source_name='_icvl_derot_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
                 prev_jnt_name='_absuvd0_bw_r012_21jnts_derot_lg0_patch56_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm9999_yt0_ep1935',
-                batch_size = 8,
-                jnt_idx = [14],
+                batch_size = 133,
+                jnt_idx = [2],
                 patch_size=40,
                 offset_depth_range=0.4,
                 c1=14,
                 c2=28,
                 h1_out_factor=2,
                 h2_out_factor=4,
-                         model_save_path = 'param_cost_offset_mid14_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep395',
-                         offset_save_path = '_offset_mid14_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep395' )
+                         model_save_path = 'param_cost_offset_mid2_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep160',
+                         offset_save_path = '_offset_mid2_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep160' )
 
 
     #

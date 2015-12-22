@@ -3,11 +3,11 @@ __author__ = 'QiYE'
 import theano
 import theano.tensor as T
 import numpy
-
 from load_data import  load_data_multi
 from src.hier_test_files.CNN_Model import CNN_Model_multi3_conv1
-
-
+from src.hier_test_files.Train import update_params,get_gradients,update_params2,set_params
+import time
+from src import constants
 def train_model(dataset,setname, source_name,batch_size,jnt_idx,c1,h1_out_factor,h2_out_factor,model_path,offset_save_path):
 
     model_info='uvd_bw_r012'
@@ -57,7 +57,7 @@ def train_model(dataset,setname, source_name,batch_size,jnt_idx,c1,h1_out_factor
 
     cost = model.cost(Y)
 
-    save_path =  '../../../data/%s/hier_derot_recur/bw_offset/'%setname
+    save_path =  '../../../data/%s/hier_derot_recur/bw_offset/best/'%setname
     model_save_path = "%s%s.npy"%(save_path,model_path)
     print model_save_path
     set_params(model_save_path, model.params)
@@ -83,28 +83,38 @@ def train_model(dataset,setname, source_name,batch_size,jnt_idx,c1,h1_out_factor
 
 
 if __name__ == '__main__':
-
-    train_model(dataset='test',
-                setname='icvl',
-                source_name='_recur1_patch_uvd_derot_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep2380',
-                model_path='param_cost_uvd_bw5_r012_egoff_c0032_h11_h22_gm0_lm1000_yt0_ep275',
-                offset_save_path='_uvd_bw5_r012_egoff_c0032_h11_h22_gm0_lm1000_yt0_ep275',
-                batch_size = 133,
-                jnt_idx = [5],
-                c1=32,
-                h1_out_factor=1,
-                h2_out_factor=2)
-
-    #
     #
     # train_model(dataset='test',
-    #             setname='nyu',
-    #             source_name='_recur1_patch_uvd_derot_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm3000_yt0_ep815',
-    #             model_path='param_cost_uvd_bw0_r012_egoff_c0064_h11_h21_gm0_lm3000_yt0_ep655',
-    #             offset_save_path='_uvd_bw0_r012_egoff_c0064_h11_h21_gm0_lm3000_yt0_ep655',
+    #             setname='msrc',
+    #             source_name='_recur1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1500',
+    #             model_path='param_cost_uvd_bw0_r012_egoff_c0064_h11_h22_gm0_lm3000_yt0_ep155',
+    #             offset_save_path='_uvd_bw0_r012_egoff_c0064_h11_h22_gm0_lm3000_yt0_ep155',
     #             batch_size = 100,
     #             jnt_idx = [0],
     #             c1=64,
-    #             offset_depth_range=0.3,
-    #             h1_out_factor=2,
-    #             h2_out_factor=4)
+    #             h1_out_factor=1,
+    #             h2_out_factor=2)
+
+    train_model(dataset='test',
+                setname='nyu',
+                source_name='_iter2_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
+                model_path='param_cost_uvd_bw5_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep440',
+                offset_save_path='_uvd_bw5_r012_egoff_c0064_h11_h22_gm0_lm6000_yt0_ep440',
+                batch_size = 100,
+                jnt_idx = [5],
+                c1=64,
+                h1_out_factor=1,
+                h2_out_factor=2)
+
+
+
+    # train_model(dataset='test',
+    #             setname='icvl',
+    #             source_name='_recur1_patch_uvd_derot_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep2380',
+    #             model_path='param_cost_uvd_bw2_r012_egoff_c0032_h11_h22_gm0_lm1000_yt0_ep215',
+    #             offset_save_path='_uvd_bw2_r012_egoff_c0032_h11_h22_gm0_lm1000_yt0_ep215',
+    #             batch_size = 133,
+    #             jnt_idx = [2],
+    #             c1=32,
+    #             h1_out_factor=1,
+    #             h2_out_factor=2)

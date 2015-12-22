@@ -3,8 +3,8 @@ __author__ = 'QiYE'
 import numpy
 import cPickle
 import matplotlib.pyplot as plt
-save_path = '../../../data/icvl/hier_derot_recur/bw_offset/'
-model_save_path = "%sparam_cost_uvd_bw1_r012_egoff_c0032_h11_h22_gm0_lm1000_yt0_ep480.npy"%save_path
+save_path = '../../../data/nyu/hier_derot_recur/bw_offset/'
+model_save_path = "%sparam_cost_uvd_bw0_r012_egoff2_c0064_h11_h22_gm0_lm9999_yt0_ep540.npy"%save_path
 
 model_info = numpy.load(model_save_path)
 train_cost = numpy.array(model_info[-2][1:-1])
@@ -20,7 +20,7 @@ print 'test cost...' ,numpy.min(test_cost),numpy.max(test_cost)
 
 max_cost = numpy.max([numpy.max(train_cost),numpy.max(test_cost)])
 # min_cost = numpy.min([numpy.min(train_cost),numpy.min(test_cost)])
-min_cost = max_cost*0.01
+min_cost = max_cost*0.1
 train_cost -= min_cost
 train_cost = train_cost/(max_cost-min_cost)
 test_cost -= min_cost

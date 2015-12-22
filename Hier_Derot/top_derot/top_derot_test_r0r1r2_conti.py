@@ -11,7 +11,7 @@ from src.Model.Train import set_params
 
 
 def test_model(dataset,dataset_path_prefix,setname,source_name,jnt_idx,patch_size,  offset_depth_range,c1,c2,h1_out_factor,h2_out_factor,model_save_path,offset_save_path,prev_jnt_name,batch_size):
-
+    print 'batch_size',batch_size
     model_info='top_derot_r0r1r2_offset_21jnts_derot'
     print model_info, constants.OUT_DIM
 
@@ -109,10 +109,10 @@ if __name__ == '__main__':
     mid_jnt_name.append('_absuvd0_mid14_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep395')
     mid_jnt_name.append('_absuvd0_mid18_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep605')
 
-    idx = 7
-    test_model(dataset='test',
+    idx = 3
+    test_model(dataset='train',
                setname='icvl',
-            batch_size = 133,
+            batch_size = 8,
                source_name='_icvl_derot_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
                dataset_path_prefix=constants.Data_Path,
                jnt_idx=[idx],
@@ -124,5 +124,5 @@ if __name__ == '__main__':
                 h1_out_factor=2,
                 h2_out_factor=4,
                prev_jnt_name=mid_jnt_name[(idx-3)/4],
-                         model_save_path = 'param_cost_offset_top7_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep465',
-                         offset_save_path = '_offset_top7_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep465')
+                         model_save_path = 'param_cost_offset_top3_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep205',
+                         offset_save_path = '_offset_top3_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep205')
