@@ -158,7 +158,7 @@ if __name__ == '__main__':
     mid_jnt_name.append('_absuvd0_top11_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep465')
     mid_jnt_name.append('_absuvd0_top15_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep470')
     mid_jnt_name.append('_absuvd0_top19_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep465')
-    idx =12
+    idx =4
      # jnt_idx = [0,1,5,9 ,13,17]
     # jnt_idx = [2,6,10 ,14,18]
     # jnt_idx = [3,7,11,15,19]

@@ -13,14 +13,14 @@ import scipy.io
 from src.utils.err_uvd_xyz import uvd_to_xyz_error_single,xyz_to_uvd_derot
 from src.utils import read_save_format
 import matplotlib.pyplot as plt
+import sys
 
-
-def test_model(dataset,setname, source_name,prev_jnt_uvd_derot,batch_size,jnt_idx,patch_size,offset_depth_range,c1,c2,h1_out_factor,h2_out_factor,model_path):
+def test_model(dataset,setname, dataset_path_prefix,source_name,prev_jnt_uvd_derot,batch_size,jnt_idx,patch_size,offset_depth_range,c1,c2,h1_out_factor,h2_out_factor,model_path):
 
     print 'offset_depth_range ',offset_depth_range
     num_enlarge=0
     model_info='mid%d_offset_r012_21jnts_derot_lg%d_patch%d'%(jnt_idx[0],num_enlarge,patch_size)
-    src_path = '../../data/%s/source/'%setname
+    src_path =  '%sdata/%s/source/'%(dataset_path_prefix,setname)
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
 
     test_set_x0, test_set_x1,test_set_x2,test_set_y= load_data_multi_top_uvd_normalized(path,prev_jnt_uvd_derot,jnt_idx=jnt_idx,
@@ -71,7 +71,7 @@ def test_model(dataset,setname, source_name,prev_jnt_uvd_derot,batch_size,jnt_id
                 p=0.5)
     cost = model.cost(Y)
 
-    save_path =    '../../data/%s/hier_derot/tip/best/'%setname
+    save_path =   '%sdata/%s/hier_derot/tip/best/'%(dataset_path_prefix,setname)
 
     model_save_path = "%s%s.npy"%(save_path,model_path)
     print 'model save path',save_path
@@ -95,7 +95,7 @@ def test_model(dataset,setname, source_name,prev_jnt_uvd_derot,batch_size,jnt_id
     print 'cost', cost_nbatch/n_test_batches
     return uvd_offset_norm
 
-def get_tip_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
+def get_tip_loc_err(setname,dataset_path_prefix,file_format,prev_jnt_path,xyz_jnt_path):
 
     """setname == 'msrc':"""
     dataset='test'
@@ -111,6 +111,10 @@ def get_tip_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
                     'param_cost_tip16_offset_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm400_yt5_ep80',
                     'param_cost_tip20_offset_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm400_yt5_ep180'
                     ]
+        c1=16
+        c2=32
+        h1_out_factor=2
+        h2_out_factor=4
         offset_depth_range=0.8
         batch_size = 100
         patch_size=40
@@ -119,11 +123,15 @@ def get_tip_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
             model_path=[]
             source_name='_nyu_derot_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300'
             source_name_ori='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300'
-            model_path.append('param_cost_offset_top3_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep845')
-            model_path.append('param_cost_offset_top7_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep1055')
-            model_path.append('param_cost_offset_top11_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep1000')
-            model_path.append('param_cost_offset_top15_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep755')
-            model_path.append('param_cost_offset_top19_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep620')
+            model_path.append('param_cost_offset_tip4_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm200_yt5_ep600')
+            model_path.append('param_cost_offset_tip8_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm150_yt5_ep600')
+            model_path.append('param_cost_offset_tip12_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm200_yt5_ep600')
+            model_path.append('param_cost_offset_tip16_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm200_yt5_ep600')
+            model_path.append('param_cost_offset_tip20_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm200_yt5_ep600')
+            c1=16
+            c2=32
+            h1_out_factor=2
+            h2_out_factor=4
             offset_depth_range=0.6
             patch_size=40
             batch_size = 100
@@ -132,12 +140,16 @@ def get_tip_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
                 model_path=[]
                 source_name='_icvl_derot_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200'
                 source_name_ori='_icvl_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200'
-                model_path.append('_absuvd0_mid2_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep1770')
-                model_path.append('_absuvd0_mid6_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep1430')
-                model_path.append('_absuvd0_mid10_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep1805')
-                model_path.append('_absuvd0_mid14_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm600_yt0_ep1290')
-                model_path.append('_absuvd0_mid18_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm400_yt0_ep665')
-                offset_depth_range=0.6
+                model_path.append('param_cost_offset_tip4_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep140')
+                model_path.append('param_cost_offset_tip8_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep1000')
+                model_path.append('param_cost_offset_tip12_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep640')
+                model_path.append('param_cost_offset_tip16_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep1000')
+                model_path.append('param_cost_offset_tip20_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep1000')
+                c1=14
+                c2=28
+                h1_out_factor=2
+                h2_out_factor=4
+                offset_depth_range=0.4
                 patch_size=40
                 batch_size = 133
             else:
@@ -148,7 +160,7 @@ def get_tip_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
     '''setname == 'icvl':'''
 
     '''don't touch the following part!!!!'''
-    src_path = '../../data/%s/source/'%setname
+    src_path = '%sdata/%s/source/'%(dataset_path_prefix,setname)
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
     print path
     f = h5py.File(path,'r')
@@ -160,11 +172,10 @@ def get_tip_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
     # derot_uvd = f['joint_label_uvd'][...]
     f.close()
 
-    keypoints = scipy.io.loadmat('../../data/%s/source/%s_%s_xyz_21joints.mat' % (setname,dataset,setname))
+    keypoints = scipy.io.loadmat('%sdata/%s/source/%s_%s_xyz_21joints.mat' % (dataset_path_prefix,setname,dataset,setname))
     xyz_true = keypoints['xyz']
-    keypoints = scipy.io.loadmat('../../data/%s/source/%s_%s_roixy_21joints.mat' % (setname,dataset,setname))
+    keypoints = scipy.io.loadmat('%sdata/%s/source/%s_%s_roixy_21joints.mat' % (dataset_path_prefix,setname,dataset,setname))
     roixy = keypoints['roixy']
-
 
     path = '%s%s%s.h5'%(src_path,dataset,source_name_ori)
     f = h5py.File(path,'r')
@@ -173,10 +184,11 @@ def get_tip_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
     err_all5 = []
     for i,jnt_idx in enumerate(jnt_idx_all5):
         prev_jnt_xyz=read_save_format.load(prev_jnt_path[i],format=file_format)
-        prev_jnt_uvd_derot = xyz_to_uvd_derot(prev_jnt_xyz,setname='msrc',rot=rot,jnt_idx=jnt_idx,
+        prev_jnt_uvd_derot = xyz_to_uvd_derot(prev_jnt_xyz,setname=setname,rot=rot,jnt_idx=jnt_idx,
                                               roixy=roixy,rect_d1d2w=rect_d1d2w,depth_dmin_dmax=depth_dmin_dmax,orig_pad_border=orig_pad_border)
 
         uvd_offset_norm = test_model(setname=setname,
+                                     dataset_path_prefix=dataset_path_prefix,
                     dataset=dataset,
                     source_name=source_name,
                     model_path=model_path[i],
@@ -184,9 +196,10 @@ def get_tip_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
                     jnt_idx = jnt_idx,
                     patch_size=patch_size,
                     offset_depth_range=offset_depth_range,
-                    c1=16,c2=32,
-                    h1_out_factor=2,
-                    h2_out_factor=4,
+                    c1=c1,
+                    c2=c2,
+                    h1_out_factor=h1_out_factor,
+                    h2_out_factor=h2_out_factor,
                     prev_jnt_uvd_derot=prev_jnt_uvd_derot
             )
         xyz,err = uvd_to_xyz_error_single(setname=setname,uvd_pred_offset=uvd_offset_norm,rot=rot,
@@ -202,20 +215,61 @@ def get_tip_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
 if __name__ == '__main__':
     """change the NUM_JNTS in src/constants.py to 1"""
     ''''change the path: xyz location of the palm center, file format can be npy or mat'''
-    setname='msrc'
+    # setname='msrc'
+    # dataset_path_prefix='C:/Users/QiYE/OneDrive/Proj_Src/Prj_Cnn_Hier/'
+    # file_format='mat'
+    # prev_jnt_path =['D:\\msrc_tmp\\jnt3_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt7_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt11_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt15_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt19_xyz.mat']
+    #
+    # xyz_jnt_save_path=['D:\\msrc_tmp\\jnt4_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt8_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt12_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt16_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt20_xyz.mat']
+    #
+    #
+    # get_tip_loc_err(setname=setname,dataset_path_prefix=dataset_path_prefix,file_format=file_format,prev_jnt_path=prev_jnt_path,xyz_jnt_path=xyz_jnt_save_path)
+
+    #
+    # setname='nyu'
+    # dataset_path_prefix='C:/Users/QiYE/OneDrive/Proj_Src/Prj_Cnn_Hier/'
+    # file_format='mat'
+    # prev_jnt_path =['D:\\nyu_tmp\\jnt3_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt7_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt11_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt15_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt19_xyz.mat']
+    #
+    # xyz_jnt_save_path=['D:\\nyu_tmp\\jnt4_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt8_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt12_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt16_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt20_xyz.mat']
+    #
+    #
+    #
+    # get_tip_loc_err(setname=setname,dataset_path_prefix=dataset_path_prefix,file_format=file_format,prev_jnt_path=prev_jnt_path,xyz_jnt_path=xyz_jnt_save_path)
+    #
+
+
+    setname='icvl'
+    dataset_path_prefix='C:/Users/QiYE/OneDrive/Proj_Src/Prj_Cnn_Hier/'
     file_format='mat'
-    prev_jnt_path =['D:\\msrc_tmp\\jnt3_xyz.mat',
-                  'D:\\msrc_tmp\\jnt7_xyz.mat',
-                  'D:\\msrc_tmp\\jnt11_xyz.mat',
-                  'D:\\msrc_tmp\\jnt15_xyz.mat',
-                  'D:\\msrc_tmp\\jnt19_xyz.mat']
-    
-    xyz_jnt_save_path=['D:\\msrc_tmp\\jnt4_xyz.mat',
-                  'D:\\msrc_tmp\\jnt8_xyz.mat',
-                  'D:\\msrc_tmp\\jnt12_xyz.mat',
-                  'D:\\msrc_tmp\\jnt16_xyz.mat',
-                  'D:\\msrc_tmp\\jnt20_xyz.mat']
-    
-    
-    
-    get_tip_loc_err(setname=setname,file_format=file_format,prev_jnt_path=prev_jnt_path,xyz_jnt_path=xyz_jnt_save_path)
+    prev_jnt_path =['D:\\icvl_tmp\\jnt3_xyz.mat',
+                  'D:\\icvl_tmp\\jnt7_xyz.mat',
+                  'D:\\icvl_tmp\\jnt11_xyz.mat',
+                  'D:\\icvl_tmp\\jnt15_xyz.mat',
+                  'D:\\icvl_tmp\\jnt19_xyz.mat']
+
+    xyz_jnt_save_path=['D:\\icvl_tmp\\jnt4_xyz.mat',
+                  'D:\\icvl_tmp\\jnt8_xyz.mat',
+                  'D:\\icvl_tmp\\jnt12_xyz.mat',
+                  'D:\\icvl_tmp\\jnt16_xyz.mat',
+                  'D:\\icvl_tmp\\jnt20_xyz.mat']
+
+    get_tip_loc_err(setname=setname,dataset_path_prefix=dataset_path_prefix,file_format=file_format,prev_jnt_path=prev_jnt_path,xyz_jnt_path=xyz_jnt_save_path)
+
+

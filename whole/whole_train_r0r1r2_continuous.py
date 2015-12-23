@@ -87,7 +87,7 @@ def train_model(setname,dataset_path_prefix,source_name,lamda,c1,c2,h1_out_facto
     updates = update_params2(model,cost,momentum=momentum,learning_rate=learning_rate)
     #
     save_path =  '%sdata/%s/whole/'%(dataset_path_prefix,setname)
-    model_save_path = "%sparam_cost_whole_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep515.npy"%save_path
+    model_save_path = "%sparam_cost_whole_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep1385.npy"%save_path
     set_params(model_save_path, model.params)
 
     print 'gamma_%f, lamda_%f,yita_%f'%(gamma, lamda,yita)
@@ -99,7 +99,7 @@ def train_model(setname,dataset_path_prefix,source_name,lamda,c1,c2,h1_out_facto
 
 
     n_epochs =2500
-    epoch =515
+    epoch =1385
     test_cost=[]
     train_cost=[]
     done_looping=False

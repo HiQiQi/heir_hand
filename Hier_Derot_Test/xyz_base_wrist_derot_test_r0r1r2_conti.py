@@ -10,15 +10,15 @@ import numpy
 import cv2
 import scipy.io
 from src.utils.err_uvd_xyz import uvd_to_xyz_error
-from src.utils import read_save_format
+from src.utils import read_save_format,constants
 
 import sys
-def test_model(setname,dataset, source_name,prev_jnt_uvd_derot,batch_size,jnt_idx,patch_size,offset_depth_range,num_enlarge,h1_out_factor,h2_out_factor,model_path):
+def test_model(setname,dataset,dataset_path_prefix, source_name,prev_jnt_uvd_derot,batch_size,jnt_idx,patch_size,offset_depth_range,num_enlarge,c1,c2,h1_out_factor,h2_out_factor,model_path):
     print 'offset_depth_range ',offset_depth_range
     model_info='uvd_bw_r012_21jnts_derot_lg%d_patch%d'%(num_enlarge,patch_size)
     print model_info
 
-    src_path = '../../data/%s/source/'%setname
+    src_path = '%sdata/%s/source/'%(dataset_path_prefix,setname)
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
     test_set_x0, test_set_x1,test_set_x2,test_set_y= load_data_multi_base_uvd_normalized(path,prev_jnt_uvd_derot,is_shuffle=False,
                                                                                          jnt_idx=jnt_idx,
@@ -37,8 +37,7 @@ def test_model(setname,dataset, source_name,prev_jnt_uvd_derot,batch_size,jnt_id
     is_train =  T.iscalar('is_train')
     # x0.tag.test_value = train_set_x0.get_value()
     Y = T.matrix('target')
-    c1=16
-    c2=32
+
 
     model = CNN_Model_multi3(X0=X0,X1=X1,X2=X2,
                              model_info=model_info,
@@ -74,7 +73,7 @@ def test_model(setname,dataset, source_name,prev_jnt_uvd_derot,batch_size,jnt_id
     cost =  model.cost(Y)
 
 
-    save_path =    '../../data/%s/hier_derot/base_wrist/best/'%setname
+    save_path =    '%sdata/%s/hier_derot/base_wrist/best/'%(dataset_path_prefix,setname)
     model_save_path = "%s%s.npy"%(save_path,model_path)
     set_params(model_save_path, model.params)
 
@@ -101,12 +100,12 @@ def test_model(setname,dataset, source_name,prev_jnt_uvd_derot,batch_size,jnt_id
 
 
 
-def test_model_msrc(setname,dataset, source_name,prev_jnt_uvd_derot,batch_size,jnt_idx,patch_size,offset_depth_range,num_enlarge,h1_out_factor,h2_out_factor,model_path):
+def test_model_msrc(setname,dataset,dataset_path_prefix, source_name,prev_jnt_uvd_derot,batch_size,jnt_idx,patch_size,offset_depth_range,num_enlarge,c1,c2,h1_out_factor,h2_out_factor,model_path):
     print 'offset_depth_range ',offset_depth_range
     model_info='uvd_bw_r012_21jnts_derot_lg%d_patch%d'%(num_enlarge,patch_size)
     print model_info
 
-    src_path = '../../data/%s/source/'%setname
+    src_path = '%sdata/%s/source/'%(dataset_path_prefix,setname)
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
     test_set_x0, test_set_x1,test_set_x2,test_set_y= load_data_multi_base_uvd_normalized(path,prev_jnt_uvd_derot,is_shuffle=False,
                                                                                          jnt_idx=jnt_idx,
@@ -114,7 +113,7 @@ def test_model_msrc(setname,dataset, source_name,prev_jnt_uvd_derot,batch_size,j
                                                                                          offset_depth_range=offset_depth_range,hand_width=96,hand_pad_width=0)
     path = '%strain%s.h5'%(src_path,source_name)
 
-    prev_jnt_path = '../../data/%s/hier_derot/final_xyz_uvd/train_absuvd0_center_r0r1r2_c0016_c0132_c1016_c1132_c2016_c2132_h16_h216_gm0_lm399_yt0_ep770.npy'%setname
+    prev_jnt_path = '%sdata/%s/hier_derot/final_xyz_uvd/train_absuvd0_center_r0r1r2_c0016_c0132_c1016_c1132_c2016_c2132_h16_h216_gm0_lm399_yt0_ep770.npy'%(dataset_path_prefix,setname)
     train_set_y= load_norm_offset_uvd(path,prev_jnt_path, jnt_idx=jnt_idx,
                                      patch_size=patch_size,
                                      offset_depth_range=offset_depth_range,hand_width=96)
@@ -133,8 +132,7 @@ def test_model_msrc(setname,dataset, source_name,prev_jnt_uvd_derot,batch_size,j
     is_train =  T.iscalar('is_train')
     # x0.tag.test_value = train_set_x0.get_value()
     Y = T.matrix('target')
-    c1=16
-    c2=32
+
 
     model = CNN_Model_multi3(X0=X0,X1=X1,X2=X2,
                              model_info=model_info,
@@ -171,7 +169,7 @@ def test_model_msrc(setname,dataset, source_name,prev_jnt_uvd_derot,batch_size,j
     cost_1 = model.cost(Y)
     cost_2 = model.cost_bw_jnts(Y,thresh=thresh_bw_jnts)
 
-    save_path =    '../../data/%s/hier_derot/base_wrist/best/'%setname
+    save_path =    '%sdata/%s/hier_derot/base_wrist/best/'%(dataset_path_prefix,setname)
     model_save_path = "%s%s.npy"%(save_path,model_path)
     set_params(model_save_path, model.params)
 
@@ -198,28 +196,32 @@ def test_model_msrc(setname,dataset, source_name,prev_jnt_uvd_derot,batch_size,j
     print 'test cost', cost_nbatch/n_test_batches,cost_loc_nbatch/n_test_batches,cost_rot_nbatch/n_test_batches
     return uvd_offset_norm
 
-def get_base_wrist_loc_err(setname,xyz_jnt_path):
+def get_base_wrist_loc_err(setname,dataset_path_prefix,xyz_jnt_path):
 
     ''''change the path: xyz location of the palm center, file format can be npy or mat'''
 
     dataset='test'
     jnt_idx = [0,1,5,9 ,13,17]
     if setname =='msrc':
-        prev_jnt_path = '../../data/%s/hier_derot/final_xyz_uvd/test_absuvd0_center_r0r1r2_c0016_c0132_c1016_c1132_c2016_c2132_h16_h216_gm0_lm399_yt0_ep770.npy'%setname
+        prev_jnt_path = '%sdata/%s/hier_derot/final_xyz_uvd/test_absuvd0_center_r0r1r2_c0016_c0132_c1016_c1132_c2016_c2132_h16_h216_gm0_lm399_yt0_ep770.npy'%(dataset_path_prefix,setname)
         source_name='_msrc_derot_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300'
         source_name_ori='_msrc_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300'
         model_path='param_cost_base_wrist_r012_uvd_21jnts_derot_lg0_patch56_c0016_c0132_c1016_c1132_c2016_c2132_h14_h216_gm0_lm10000_yt0_ep1000'
         batch_size = 100
         patch_size=56
         offset_depth_range=1.0
+        c1=16
+        c2=32
         h1_out_factor=4
         h2_out_factor=16
     else:
         if setname=='nyu':
             source_name='_nyu_derot_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300'
             source_name_ori='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300'
-            prev_jnt_path = '../../data/%s/hier_derot/final_xyz_uvd/test_absuvd0_center_r0r1r2_c0016_c0132_c1016_c1132_c2016_c2132_h16_h216_gm0_lm300_yt0_ep1000.npy'%setname
+            prev_jnt_path = '%s/data/%s/hier_derot/final_xyz_uvd/test_absuvd0_center_r0r1r2_c0016_c0132_c1016_c1132_c2016_c2132_h16_h216_gm0_lm300_yt0_ep1000.npy'%(dataset_path_prefix,setname)
             model_path='param_cost_uvd_base_wrist_r012_21jnts_derot_lg0_patch56_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm9999_yt0_ep2000'
+            c1=16
+            c2=32
             h1_out_factor=2
             h2_out_factor=4
             batch_size = 100
@@ -227,15 +229,17 @@ def get_base_wrist_loc_err(setname,xyz_jnt_path):
             offset_depth_range=0.8
         else:
             if setname=='icvl':
-                source_name='_msrc_derot_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300'
-                source_name_ori='_msrc_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300'
-                prev_jnt_path = '../../data/%s/hier_derot/final_xyz_uvd/test_absuvd0_center_r0r1r2_c0016_c0132_c1016_c1132_c2016_c2132_h16_h216_gm0_lm399_yt0_ep770.npy'%setname
-                model_path='param_cost_base_wrist_r012_uvd_21jnts_derot_lg0_patch56_c0016_c0132_c1016_c1132_c2016_c2132_h14_h216_gm0_lm10000_yt0_ep1000'
-                h1_out_factor=12
-                h2_out_factor=24
+                source_name='_icvl_derot_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200'
+                source_name_ori='_icvl_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200'
+                prev_jnt_path = '%sdata/%s/hier_derot/final_xyz_uvd/test_absuvd0_center_r0r1r2_c0016_c0132_c1016_c1132_c2016_c2132_h16_h216_gm0_lm300_yt0_ep1445.npy'%(dataset_path_prefix,setname)
+                model_path='param_cost_uvd_bw_r012_21jnts_derot_lg0_patch56_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm9999_yt0_ep1935'
+                c1=16
+                c2=32
+                h1_out_factor=2
+                h2_out_factor=4
                 batch_size = 133
                 patch_size=56
-                offset_depth_range=0.8
+                offset_depth_range=0.6
             else:
                 sys.exit('dataset name shoudle be icvl/nyu/msrc')
 
@@ -243,7 +247,7 @@ def get_base_wrist_loc_err(setname,xyz_jnt_path):
     file_format='npy'
 
     '''don't touch the following part!!!!'''
-    src_path = '../../data/%s/source/'%setname
+    src_path = '%sdata/%s/source/'%(dataset_path_prefix,setname)
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
     print path
     f = h5py.File(path,'r')
@@ -255,9 +259,9 @@ def get_base_wrist_loc_err(setname,xyz_jnt_path):
     # derot_uvd = f['joint_label_uvd'][...]
     f.close()
 
-    keypoints = scipy.io.loadmat('../../data/%s/source/%s_%s_xyz_21joints.mat' % (setname,dataset,setname))
+    keypoints = scipy.io.loadmat('%sdata/%s/source/%s_%s_xyz_21joints.mat' % (dataset_path_prefix,setname,dataset,setname))
     xyz_true = keypoints['xyz']
-    keypoints = scipy.io.loadmat('../../data/%s/source/%s_%s_roixy_21joints.mat' % (setname,dataset,setname))
+    keypoints = scipy.io.loadmat('%sdata/%s/source/%s_%s_roixy_21joints.mat' % (dataset_path_prefix,setname,dataset,setname))
     roixy = keypoints['roixy']
 
 
@@ -269,6 +273,7 @@ def get_base_wrist_loc_err(setname,xyz_jnt_path):
     prev_jnt_uvd_derot=read_save_format.load(prev_jnt_path,format=file_format)
     if setname =='msrc':
         uvd_offset_norm = test_model_msrc(setname=setname,
+                                          dataset_path_prefix=dataset_path_prefix,
                     dataset=dataset,
                     source_name=source_name,
                     model_path=model_path,
@@ -277,12 +282,15 @@ def get_base_wrist_loc_err(setname,xyz_jnt_path):
                     num_enlarge=0,
                     patch_size=patch_size,
                     offset_depth_range=offset_depth_range,
+                    c1=c1,
+                    c2=c2,
                     h1_out_factor=h1_out_factor,
                     h2_out_factor=h2_out_factor,
                     prev_jnt_uvd_derot=prev_jnt_uvd_derot
             )
     else:
         uvd_offset_norm = test_model(setname=setname,
+                                     dataset_path_prefix=dataset_path_prefix,
                     dataset=dataset,
                     source_name=source_name,
                     model_path=model_path,
@@ -291,6 +299,8 @@ def get_base_wrist_loc_err(setname,xyz_jnt_path):
                     num_enlarge=0,
                     patch_size=patch_size,
                     offset_depth_range=offset_depth_range,
+                    c1=c1,
+                    c2=c2,
                     h1_out_factor=h1_out_factor,
                     h2_out_factor=h2_out_factor,
                     prev_jnt_uvd_derot=prev_jnt_uvd_derot
@@ -314,13 +324,47 @@ def get_base_wrist_loc_err(setname,xyz_jnt_path):
 
 if __name__ == '__main__':
     """change the NUM_JNTS in src/constants.py to 6"""
-    setname='nyu'
-    xyz_jnt_save_path =   ['D:\\msrc_tmp\\jnt0_xyz.mat',
-                           'D:\\msrc_tmp\\jnt1_xyz.mat',
-                           'D:\\msrc_tmp\\jnt5_xyz.mat',
-                           'D:\\msrc_tmp\\jnt9_xyz.mat',
-                           'D:\\msrc_tmp\\jnt13_xyz.mat',
-                           'D:\\msrc_tmp\\jnt17_xyz.mat']
 
 
-    get_base_wrist_loc_err(setname,xyz_jnt_save_path)
+    # setname='msrc'
+    # # model saved path can be relatve or abs path
+    # dataset_path_prefix='C:/Users/QiYE/OneDrive/Proj_Src/Prj_Cnn_Hier/'
+    # # xyz predicted saveing path
+    # xyz_jnt_save_path =   ['D:\\msrc_tmp\\jnt0_xyz.mat',
+    #                        'D:\\msrc_tmp\\jnt1_xyz.mat',
+    #                        'D:\\msrc_tmp\\jnt5_xyz.mat',
+    #                        'D:\\msrc_tmp\\jnt9_xyz.mat',
+    #                        'D:\\msrc_tmp\\jnt13_xyz.mat',
+    #                        'D:\\msrc_tmp\\jnt17_xyz.mat']
+    #
+    #
+    # get_base_wrist_loc_err(dataset_path_prefix=dataset_path_prefix,setname=setname,xyz_jnt_path=xyz_jnt_save_path)
+
+
+    # setname='nyu'
+    # # model saved path can be relatve or abs path
+    # dataset_path_prefix='C:/Users/QiYE/OneDrive/Proj_Src/Prj_Cnn_Hier/'
+    # # xyz predicted saveing path
+    # xyz_jnt_save_path =   ['D:\\nyu_tmp\\jnt0_xyz.mat',
+    #                        'D:\\nyu_tmp\\jnt1_xyz.mat',
+    #                        'D:\\nyu_tmp\\jnt5_xyz.mat',
+    #                        'D:\\nyu_tmp\\jnt9_xyz.mat',
+    #                        'D:\\nyu_tmp\\jnt13_xyz.mat',
+    #                        'D:\\nyu_tmp\\jnt17_xyz.mat']
+    #
+    #
+    # get_base_wrist_loc_err(dataset_path_prefix=dataset_path_prefix,setname=setname,xyz_jnt_path=xyz_jnt_save_path)
+
+    setname='icvl'
+    # model saved path can be relatve or abs path
+    dataset_path_prefix='C:/Users/QiYE/OneDrive/Proj_Src/Prj_Cnn_Hier/'
+    # xyz predicted saveing path
+    xyz_jnt_save_path =   ['D:\\icvl_tmp\\jnt0_xyz.mat',
+                           'D:\\icvl_tmp\\jnt1_xyz.mat',
+                           'D:\\icvl_tmp\\jnt5_xyz.mat',
+                           'D:\\icvl_tmp\\jnt9_xyz.mat',
+                           'D:\\icvl_tmp\\jnt13_xyz.mat',
+                           'D:\\icvl_tmp\\jnt17_xyz.mat']
+
+
+    get_base_wrist_loc_err(dataset_path_prefix=dataset_path_prefix,setname=setname,xyz_jnt_path=xyz_jnt_save_path)

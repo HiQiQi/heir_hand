@@ -75,7 +75,7 @@ def test_model(batch_size,dataset,setname,source_name,dataset_path_prefix,jnt_id
     cost = model.cost(Y)
 
 
-    save_path  = '%sdata/%s/hier_derot/tip/'%(dataset_path_prefix,setname)
+    save_path  = '%sdata/%s/hier_derot/tip/best/'%(dataset_path_prefix,setname)
     model_save_path = "%s%s.npy"%(save_path,model_save_path)
     set_params(model_save_path, model.params)
 
@@ -101,6 +101,7 @@ def test_model(batch_size,dataset,setname,source_name,dataset_path_prefix,jnt_id
     numpy.save("%s%s%s.npy"%(save_path,dataset,offset_save_path),uvd_norm)
 
 if __name__ == '__main__':
+    # icvl
     top_jnt_name=[]
     top_jnt_name.append('_absuvd0_top3_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep205')
     top_jnt_name.append('_absuvd0_top7_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep465')
@@ -111,7 +112,7 @@ if __name__ == '__main__':
     #            jnt_idx=[idx],patch_size=40,  offset_depth_range=0.8,  h1_out_factor=2,h2_out_factor=4,prev_jnt_name=mid_jnt_name[idx/5],
     #                      model_save_path = 'param_cost_tip20_offset_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm400_yt5_ep100',
     #                      offset_save_path = '_tip20_offset_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm400_yt5_ep100')
-    idx = 20
+    idx = 4
     test_model(dataset='test',
                setname='icvl',
                batch_size=133,
@@ -120,12 +121,12 @@ if __name__ == '__main__':
                jnt_idx=[idx],
                patch_size=40,
                offset_depth_range=0.4,
-                               c1=16,
-                c2=32,
+                               c1=14,
+                c2=28,
                h1_out_factor=2,h2_out_factor=4,
                prev_jnt_name=top_jnt_name[(idx-4)/4],
-                         model_save_path = 'param_cost_offset_tip20_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm100_yt5_ep655',
-                         offset_save_path = '_offset_tip20_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm100_yt5_ep655')
+                         model_save_path = 'param_cost_offset_tip4_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep140',
+                         offset_save_path = '_offset_tip4_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep140')
 
 
      # jnt_idx = [0,1,5,9 ,13,17]
@@ -134,3 +135,25 @@ if __name__ == '__main__':
     # jnt_idx = [4,8,12,16,20]
 
 
+    # nyu
+    # top_jnt_name=[]
+    # top_jnt_name.append('_absuvd0_top3_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep845')
+    # top_jnt_name.append('_absuvd0_top7_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep1055')
+    # top_jnt_name.append('_absuvd0_top11_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep1000')
+    # top_jnt_name.append('_absuvd0_top15_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep755')
+    # top_jnt_name.append('_absuvd0_top19_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep620')
+    # idx = 20
+    # test_model(dataset='train',
+    #            setname='nyu',
+    #            batch_size=8,
+    #             dataset_path_prefix=constants.Data_Path,
+    #             source_name='_nyu_derot_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
+    #            jnt_idx=[idx],
+    #            patch_size=40,
+    #            offset_depth_range=0.6,
+    #                            c1=16,
+    #             c2=32,
+    #            h1_out_factor=2,h2_out_factor=4,
+    #            prev_jnt_name=top_jnt_name[(idx-4)/4],
+    #                      model_save_path = 'param_cost_offset_tip20_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm200_yt5_ep600',
+    #                      offset_save_path = '_offset_tip20_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm200_yt5_ep600')

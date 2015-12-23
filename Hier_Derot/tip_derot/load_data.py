@@ -49,7 +49,7 @@ def load_data_multi_tip_uvd_normalized(path,pre_jnt_path,jnt_idx,is_shuffle,patc
     '''creat pathes based on ground truth
     htmap is a qunatized location for each joint
     '''
-
+    print 'is_shuffle',is_shuffle
     f = h5py.File(path,'r')
     r0 = f['r0'][...]
     r1 = f['r1'][...]

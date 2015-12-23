@@ -15,12 +15,12 @@ from src.utils import read_save_format
 import matplotlib.pyplot as plt
 import sys
 
-def test_model(dataset,setname, source_name,prev_jnt_uvd_derot,batch_size,jnt_idx,patch_size,offset_depth_range,c1,c2,h1_out_factor,h2_out_factor,model_path):
+def test_model(dataset,setname,dataset_path_prefix, source_name,prev_jnt_uvd_derot,batch_size,jnt_idx,patch_size,offset_depth_range,c1,c2,h1_out_factor,h2_out_factor,model_path):
 
     print 'offset_depth_range ',offset_depth_range
     num_enlarge=0
     model_info='mid%d_offset_r012_21jnts_derot_lg%d_patch%d'%(jnt_idx[0],num_enlarge,patch_size)
-    src_path = '../../data/%s/source/'%setname
+    src_path = '%sdata/%s/source/'%(dataset_path_prefix,setname)
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
 
     test_set_x0, test_set_x1,test_set_x2,test_set_y= load_data_multi_mid_uvd_normalized(path,prev_jnt_uvd_derot,jnt_idx=jnt_idx,
@@ -71,7 +71,7 @@ def test_model(dataset,setname, source_name,prev_jnt_uvd_derot,batch_size,jnt_id
                 p=0.5)
     cost = model.cost(Y)
 
-    save_path =    '../../data/%s/hier_derot/mid/best/'%setname
+    save_path =   '%sdata/%s/hier_derot/mid/best/'%(dataset_path_prefix,setname)
     model_save_path = "%s%s.npy"%(save_path,model_path)
     set_params(model_save_path, model.params)
 
@@ -93,7 +93,7 @@ def test_model(dataset,setname, source_name,prev_jnt_uvd_derot,batch_size,jnt_id
     print 'cost', cost_nbatch/n_test_batches
     return uvd_offset_norm
 
-def get_mid_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
+def get_mid_loc_err(setname,dataset_path_prefix,file_format,prev_jnt_path,xyz_jnt_path):
     jnt_idx_all5 = [[2],[6],[10],[14],[18]]
 
     dataset='test'
@@ -107,6 +107,8 @@ def get_mid_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
                     'param_cost_mid14_offset_r012_21jnts_derot_lg0_patch40_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm499_yt5_ep450',
                     'param_cost_mid18_offset_r012_21jnts_derot_lg0_patch40_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm499_yt5_ep200'
                     ]
+        c1=16
+        c2=32
         batch_size = 100
         patch_size=40
         offset_depth_range=0.8
@@ -120,27 +122,31 @@ def get_mid_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
                         'param_cost_offset_mid14_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm600_yt0_ep1290',
                         'param_cost_offset_mid18_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm400_yt0_ep665'
                         ]
+            c1=16
+            c2=32
             batch_size = 100
             patch_size=40
             offset_depth_range=0.6
         else:
             if setname=='icvl':
-                source_name='_msrc_derot_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300'
-                source_name_ori='_msrc_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300'
-                model_path=['param_cost_mid2_offset_r012_21jnts_derot_lg0_patch40_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm499_yt5_ep400',
-                            'param_cost_mid6_offset_r012_21jnts_derot_lg0_patch40_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm499_yt5_ep600',
-                            'param_cost_mid10_offset_r012_21jnts_derot_lg0_patch40_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm499_yt5_ep500',
-                            'param_cost_mid14_offset_r012_21jnts_derot_lg0_patch40_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm499_yt5_ep450',
-                            'param_cost_mid18_offset_r012_21jnts_derot_lg0_patch40_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm499_yt5_ep200'
+                source_name='_icvl_derot_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200'
+                source_name_ori='_icvl_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200'
+                model_path=['param_cost_offset_mid2_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep100',
+                            'param_cost_offset_mid6_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep305',
+                            'param_cost_offset_mid10_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep385',
+                            'param_cost_offset_mid14_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep395',
+                            'param_cost_offset_mid18_r012_21jnts_derot_lg0_patch40_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm300_yt0_ep605'
                             ]
+                c1=14
+                c2=28
                 batch_size = 133
                 patch_size=40
-                offset_depth_range=0.8
+                offset_depth_range=0.4
             else:
                 sys.exit('dataset name shoudle be icvl/nyu/msrc')
 
     '''don't touch the following part!!!!'''
-    src_path = '../../data/%s/source/'%setname
+    src_path = '%sdata/%s/source/'%(dataset_path_prefix,setname)
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
     print path
     f = h5py.File(path,'r')
@@ -152,9 +158,9 @@ def get_mid_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
     # derot_uvd = f['joint_label_uvd'][...]
     f.close()
 
-    keypoints = scipy.io.loadmat('../../data/%s/source/%s_%s_xyz_21joints.mat' % (setname,dataset,setname))
+    keypoints = scipy.io.loadmat('%sdata/%s/source/%s_%s_xyz_21joints.mat' % (dataset_path_prefix,setname,dataset,setname))
     xyz_true = keypoints['xyz']
-    keypoints = scipy.io.loadmat('../../data/%s/source/%s_%s_roixy_21joints.mat' % (setname,dataset,setname))
+    keypoints = scipy.io.loadmat('%sdata/%s/source/%s_%s_roixy_21joints.mat' % (dataset_path_prefix,setname,dataset,setname))
     roixy = keypoints['roixy']
 
 
@@ -165,10 +171,11 @@ def get_mid_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
     err_all5 = []
     for i,jnt_idx in enumerate(jnt_idx_all5):
         prev_jnt_xyz=read_save_format.load(prev_jnt_path[i],format=file_format)
-        prev_jnt_uvd_derot = xyz_to_uvd_derot(prev_jnt_xyz,setname='msrc',rot=rot,jnt_idx=jnt_idx,
+        prev_jnt_uvd_derot = xyz_to_uvd_derot(prev_jnt_xyz,setname=setname,rot=rot,jnt_idx=jnt_idx,
                                               roixy=roixy,rect_d1d2w=rect_d1d2w,depth_dmin_dmax=depth_dmin_dmax,orig_pad_border=orig_pad_border)
 
         uvd_offset_norm = test_model(setname=setname,
+                                     dataset_path_prefix=dataset_path_prefix,
                     dataset=dataset,
                     source_name=source_name,
                     model_path=model_path[i],
@@ -176,7 +183,7 @@ def get_mid_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
                     jnt_idx = jnt_idx,
                     patch_size=patch_size,
                     offset_depth_range=offset_depth_range,
-                    c1=16,c2=32,
+                    c1=c1,c2=c2,
                     h1_out_factor=2,
                     h2_out_factor=4,
                     prev_jnt_uvd_derot=prev_jnt_uvd_derot
@@ -195,20 +202,58 @@ def get_mid_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_path):
 if __name__ == '__main__':
     """change the NUM_JNTS in src/constants.py to 1"""
     ''''change the path: xyz location of the palm center, file format can be npy or mat'''
-    setname='msrc'
+    # setname='msrc'
+    # dataset_path_prefix='C:/Users/QiYE/OneDrive/Proj_Src/Prj_Cnn_Hier/'
+    # file_format='mat'
+    # prev_jnt_path =['D:\\msrc_tmp\\jnt1_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt5_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt9_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt13_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt17_xyz.mat']
+    #
+    # xyz_jnt_save_path=['D:\\msrc_tmp\\jnt2_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt6_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt10_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt14_xyz.mat',
+    #               'D:\\msrc_tmp\\jnt18_xyz.mat']
+    # get_mid_loc_err(setname=setname,dataset_path_prefix=dataset_path_prefix,file_format=file_format,prev_jnt_path=prev_jnt_path,xyz_jnt_path=xyz_jnt_save_path)
+
+    # setname='nyu'
+    # dataset_path_prefix='C:/Users/QiYE/OneDrive/Proj_Src/Prj_Cnn_Hier/'
+    # file_format='mat'
+    # prev_jnt_path =['D:\\nyu_tmp\\jnt1_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt5_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt9_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt13_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt17_xyz.mat']
+    #
+    # xyz_jnt_save_path=['D:\\nyu_tmp\\jnt2_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt6_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt10_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt14_xyz.mat',
+    #               'D:\\nyu_tmp\\jnt18_xyz.mat']
+    #
+    #
+    #
+    # get_mid_loc_err(setname=setname,dataset_path_prefix=dataset_path_prefix,file_format=file_format,prev_jnt_path=prev_jnt_path,xyz_jnt_path=xyz_jnt_save_path)
+
+    setname='icvl'
+    dataset_path_prefix='C:/Users/QiYE/OneDrive/Proj_Src/Prj_Cnn_Hier/'
     file_format='mat'
-    prev_jnt_path =['D:\\msrc_tmp\\jnt1_xyz.mat',
-                  'D:\\msrc_tmp\\jnt5_xyz.mat',
-                  'D:\\msrc_tmp\\jnt9_xyz.mat',
-                  'D:\\msrc_tmp\\jnt13_xyz.mat',
-                  'D:\\msrc_tmp\\jnt17_xyz.mat']
-
-    xyz_jnt_save_path=['D:\\msrc_tmp\\jnt2_xyz.mat',
-                  'D:\\msrc_tmp\\jnt6_xyz.mat',
-                  'D:\\msrc_tmp\\jnt10_xyz.mat',
-                  'D:\\msrc_tmp\\jnt14_xyz.mat',
-                  'D:\\msrc_tmp\\jnt18_xyz.mat']
+    prev_jnt_path = [
+                           'D:\\icvl_tmp\\jnt1_xyz.mat',
+                           'D:\\icvl_tmp\\jnt5_xyz.mat',
+                           'D:\\icvl_tmp\\jnt9_xyz.mat',
+                           'D:\\icvl_tmp\\jnt13_xyz.mat',
+                           'D:\\icvl_tmp\\jnt17_xyz.mat']
 
 
+    xyz_jnt_save_path=['D:\\icvl_tmp\\jnt2_xyz.mat',
+                  'D:\\icvl_tmp\\jnt6_xyz.mat',
+                  'D:\\icvl_tmp\\jnt10_xyz.mat',
+                  'D:\\icvl_tmp\\jnt14_xyz.mat',
+                  'D:\\icvl_tmp\\jnt18_xyz.mat']
 
-    get_mid_loc_err(setname,file_format,prev_jnt_path,xyz_jnt_save_path)
+
+
+    get_mid_loc_err(setname=setname,dataset_path_prefix=dataset_path_prefix,file_format=file_format,prev_jnt_path=prev_jnt_path,xyz_jnt_path=xyz_jnt_save_path)

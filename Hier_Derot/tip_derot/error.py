@@ -84,6 +84,30 @@ def tip_derot_err_uvd_xyz(dataset,setname,dataset_path_prefix,source_name,source
     numpy.save("%s%s_absuvd%s.npy"%(direct,dataset,final_save_name),predict_uvd)
 
 if __name__=='__main__':
+
+
+    # nyu
+    # top_jnt_name=[]
+    # top_jnt_name.append('_absuvd0_top3_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep845')
+    # top_jnt_name.append('_absuvd0_top7_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep1055')
+    # top_jnt_name.append('_absuvd0_top11_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep1000')
+    # top_jnt_name.append('_absuvd0_top15_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep755')
+    # top_jnt_name.append('_absuvd0_top19_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm300_yt5_ep620')
+    # idx = 20
+    # tip_derot_err_uvd_xyz(dataset='train',
+    #            setname='nyu',
+    #         dataset_path_prefix=constants.Data_Path,
+    #                          source_name='_nyu_derot_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
+    #                          source_name_ori='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
+    #                       prev_jnt_name=top_jnt_name[(idx-4)/4],
+    #                              uvd_pred_offset_path='_offset_tip20_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm200_yt5_ep600',
+    #                              final_save_name='_tip20_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm200_yt5_ep600',
+    #                              patch_size=40,
+    #                              offset_depth_range=0.6,
+    #                              jnt_idx = [idx])
+
+
+
     # icvl
     top_jnt_name=[]
     top_jnt_name.append('_absuvd0_top3_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep205')
@@ -91,15 +115,15 @@ if __name__=='__main__':
     top_jnt_name.append('_absuvd0_top11_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep465')
     top_jnt_name.append('_absuvd0_top15_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep470')
     top_jnt_name.append('_absuvd0_top19_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm200_yt0_ep465')
-    idx = 20
+    idx = 4
     tip_derot_err_uvd_xyz(dataset='test',
                setname='icvl',
             dataset_path_prefix=constants.Data_Path,
                              source_name='_icvl_derot_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
                              source_name_ori='_icvl_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
                           prev_jnt_name=top_jnt_name[(idx-4)/4],
-                                 uvd_pred_offset_path='_offset_tip20_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm100_yt5_ep600',
-                                 final_save_name='_tip20_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm100_yt5_ep600',
+                                 uvd_pred_offset_path='_offset_tip4_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep140',
+                                 final_save_name='_tip4_r012_21jnts_derot_c0014_c0128_c1014_c1128_c2014_c2128_h12_h24_gm0_lm100_yt0_ep140',
                                  patch_size=40,
                                  offset_depth_range=0.4,
                                  jnt_idx = [idx])
