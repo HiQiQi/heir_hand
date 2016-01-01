@@ -3,8 +3,9 @@ __author__ = 'QiYE'
 import numpy
 
 import matplotlib.pyplot as plt
-save_path = '../../data/msrc/hier_derot/top/'
-model_save_path = "%sparam_cost_top19_offset_r012_21jnts_derot_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm400_yt5_ep70.npy"%save_path
+from src.utils import constants
+save_path = '%sdata/msrc/whole/'%constants.Data_Path
+model_save_path = "%sparam_cost_whole_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm300_yt0_ep345.npy"%save_path
 model_info = numpy.load(model_save_path)
 
 train_cost = numpy.array(model_info[-2][1:-1])

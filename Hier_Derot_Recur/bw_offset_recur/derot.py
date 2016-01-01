@@ -219,6 +219,8 @@ def read_derot_dataset(dataset,setname,file_name):
         # ax=fig.add_subplot(133)
         # ax.imshow(r2[i],'gray')
         plt.show()
+def read_jnt_loc_upd(upd_pred_name):
+
 
 if __name__ == "__main__":
 

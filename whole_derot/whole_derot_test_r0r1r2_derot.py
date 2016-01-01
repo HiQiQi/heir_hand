@@ -1,21 +1,21 @@
 __author__ = 'QiYE'
-
+from src.utils import constants
 import theano
 import theano.tensor as T
 import numpy
 from load_data import  load_data_multi
-from src.hier_test_files.CNN_Model import CNN_Model_multi3
-from src.hier_test_files.Train import update_params,get_gradients,set_params,update_params2
+from src.Model.CNN_Model import CNN_Model_multi3
+from src.Model.Train import update_params,get_gradients,set_params,update_params2
 import time
 
-def train_model(dataset, setname, model_save_name, pred_save_name,source_name,c1,c2,h1_out_factor,h2_out_factor,batch_size):
+def train_model(dataset, dataset_path_prefix,setname, model_save_name, pred_save_name,source_name,c1,c2,h1_out_factor,h2_out_factor,batch_size):
 
     # jnt_type='base' # jnt_type : base,mid, tip
 
     model_info='whole_derot_21jnts_r0r1r2_conti'
     jnt_idx = range(0,21,1)
     print jnt_idx
-    src_path = '../../data/%s/source/'%setname
+    src_path = '%sdata/%s/source/'%(dataset_path_prefix,setname)
 
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
     test_set_x0, test_set_x1,test_set_x2,test_set_y= load_data_multi(path,jnt_idx,is_shuffle=False)
@@ -67,7 +67,7 @@ def train_model(dataset, setname, model_save_name, pred_save_name,source_name,c1
 
     cost = model.cost(Y)
 
-    save_path = '../../data/%s/whole_derot/best/'%setname
+    save_path = '%sdata/%s/whole_derot/best/'%(dataset_path_prefix,setname)
     model_save_path = "%s%s.npy"%(save_path,model_save_name)
     set_params(model_save_path, model.params)
 
@@ -93,13 +93,15 @@ def train_model(dataset, setname, model_save_name, pred_save_name,source_name,c1
 
 if __name__ == '__main__':
 
-    # train_model(dataset='test',setname='icvl',batch_size=133,
-    #             source_name='_icvl_derot_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
-    #             model_save_name = 'param_cost_whole_derot_21jnts_r012_conti_c0016_c0132_c1016_c1132_c2016_c2132_h18_h232_gm0_lm600_yt0_ep1775',
-    #             pred_save_name = '_whole_derot_21jnts_r012_conti_c0016_c0132_c1016_c1132_c2016_c2132_h18_h232_gm0_lm600_yt0_ep1775',
-    #             c1=16,c2=32,h1_out_factor=8,h2_out_factor=32)
-    train_model(dataset='test',setname='nyu',batch_size=100,
-                source_name='_nyu_derot_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
-                model_save_name = 'param_cost_whole_derot_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep925',
-                pred_save_name = '_whole_derot_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep925',
-                c1=32,c2=64,h1_out_factor=8,h2_out_factor=32)
+    train_model(dataset='test',
+                dataset_path_prefix=constants.Data_Path,
+                setname='icvl',batch_size=133,
+                source_name='_icvl_derot_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200',
+                model_save_name = 'param_cost_whole_derot_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep1740',
+                pred_save_name = '_whole_derot_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep1740',
+                c1=16,c2=32,h1_out_factor=8,h2_out_factor=32)
+    # train_model(dataset='test',setname='nyu',batch_size=100,
+    #             source_name='_nyu_derot_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
+    #             model_save_name = 'param_cost_whole_derot_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep925',
+    #             pred_save_name = '_whole_derot_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep925',
+    #             c1=32,c2=64,h1_out_factor=8,h2_out_factor=32)

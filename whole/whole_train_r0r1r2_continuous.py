@@ -86,9 +86,9 @@ def train_model(setname,dataset_path_prefix,source_name,lamda,c1,c2,h1_out_facto
     # updates = update_params(model.params,grads,gamma=gamma,yita=yita,lamda=lamda)
     updates = update_params2(model,cost,momentum=momentum,learning_rate=learning_rate)
     #
-    save_path =  '%sdata/%s/whole/'%(dataset_path_prefix,setname)
-    model_save_path = "%sparam_cost_whole_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep1385.npy"%save_path
-    set_params(model_save_path, model.params)
+    # save_path =  '%sdata/%s/whole/'%(dataset_path_prefix,setname)
+    # model_save_path = "%sparam_cost_whole_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep1385.npy"%save_path
+    # set_params(model_save_path, model.params)
 
     print 'gamma_%f, lamda_%f,yita_%f'%(gamma, lamda,yita)
     save_path =  '%sdata/%s/whole/'%(dataset_path_prefix,setname)
@@ -99,7 +99,7 @@ def train_model(setname,dataset_path_prefix,source_name,lamda,c1,c2,h1_out_facto
 
 
     n_epochs =2500
-    epoch =1385
+    epoch =0
     test_cost=[]
     train_cost=[]
     done_looping=False
@@ -156,10 +156,12 @@ def train_model(setname,dataset_path_prefix,source_name,lamda,c1,c2,h1_out_facto
         model.save(path=save_path,c00=c1,c01=c2,c10=c1,c11=c2,c20=c1,c21=c2,h1_out_factor=h1_out_factor,h2_out_factor=h2_out_factor,
                    gamma=momentum.get_value()*1000,lamda=learning_rate.get_value()*100000,yita=yita*10000,epoch=epoch,train_cost=train_cost,test_cost=test_cost)
 if __name__ == '__main__':
-    train_model(setname='icvl',dataset_path_prefix=constants.Data_Path,
-                source_name='_icvl_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200', lamda=0.004,c1=32,c2=64,h1_out_factor=8,h2_out_factor=32,batch_size=100)
+    # train_model(setname='icvl',dataset_path_prefix=constants.Data_Path,
+    #             source_name='_icvl_r0_r1_r2_uvd_bbox_21jnts_20151113_depth200', lamda=0.004,c1=32,c2=64,h1_out_factor=8,h2_out_factor=32,batch_size=100)
     # train_model(setname='nyu',source_name='_nyu_shf_r0_r1_r2_uvd_bbox_21jnts_20151113_depth300',
     #             lamda=0.003,c1=32,c2=64,h1_out_factor=8,h2_out_factor=32,batch_size=100)
 
-    # train_model(setname='msrc',source_name='_msrc_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300',
-    #             lamda=0.001,c1=32,c2=64,h1_out_factor=4,h2_out_factor=32,batch_size=100)
+    train_model(setname='msrc',
+                dataset_path_prefix=constants.Data_Path,
+    source_name='_msrc_r0_r1_r2_uvd_bbox_21jnts_20151030_depth300',
+                lamda=0.003,c1=32,c2=64,h1_out_factor=8,h2_out_factor=32,batch_size=100)

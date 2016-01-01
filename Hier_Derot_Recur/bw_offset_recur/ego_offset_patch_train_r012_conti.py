@@ -4,17 +4,17 @@ import theano
 import theano.tensor as T
 import numpy
 from load_data import  load_data_multi
-from src.hier_test_files.CNN_Model import CNN_Model_multi3_conv1
-from src.hier_test_files.Train import update_params,get_gradients,update_params2,set_params
+from src.Model.CNN_Model import CNN_Model_multi3_conv1
+from src.Model.Train import update_params,get_gradients,update_params2,set_params
 import time
-from src import constants
-def train_model(setname, source_name,batch_size,jnt_idx,c1,h1_out_factor,h2_out_factor,lamda):
+from src.utils import constants
+def train_model(setname, dataset_path_prefix,source_name,batch_size,jnt_idx,c1,h1_out_factor,h2_out_factor,lamda):
 
     model_info='uvd_bw%s_r012_egoff2'%jnt_idx[0]
     print model_info
 
     dataset = 'train'
-    src_path = '../../../data/%s/hier_derot_recur/bw_offset/best/'%setname
+    src_path ='%sdata/%s/hier_derot_recur/bw_initial/best/'%(dataset_path_prefix,setname)
     path = '%s%s%s.h5'%(src_path,dataset,source_name)
     print 'source path',path
 
@@ -96,13 +96,13 @@ def train_model(setname, source_name,batch_size,jnt_idx,c1,h1_out_factor,h2_out_
         outputs=cost,on_unused_input='ignore')
 
 
-    n_epochs =1500
+    n_epochs =600
     epoch = 0
     test_cost=[]
     train_cost=[]
 
     done_looping=False
-    save_path =  '../../../data/%s/hier_derot_recur/bw_offset/'%setname
+    save_path = '%sdata/%s/hier_derot_recur/bw_offset/'%(dataset_path_prefix,setname)
     drop = numpy.cast['int32'](0)
     print 'dropout', drop
     model.save(path=save_path,c00=c1,h1_out_factor=h1_out_factor,h2_out_factor=h2_out_factor,gamma=momentum.get_value()*10000,lamda=learning_rate.get_value()*1000000,yita=yita*1000,epoch=epoch,
@@ -158,31 +158,34 @@ def train_model(setname, source_name,batch_size,jnt_idx,c1,h1_out_factor,h2_out_
 
 
 if __name__ == '__main__':
-    # train_model(setname='msrc',
-    #             source_name='_iter2_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1500',
-    #             lamda = 0.003,
+
+    train_model(setname='msrc',
+                dataset_path_prefix=constants.Data_Path,
+                source_name='_iter0_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep1500',
+                lamda = 0.003,
+                batch_size = 100,
+                jnt_idx = [5],
+                    c1=64,
+                h1_out_factor=1,
+                h2_out_factor=2)
+
+
+    # train_model(setname='nyu',
+    #             source_name='_iter1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
+    #             lamda = 0.01,
     #             batch_size = 100,
     #             jnt_idx = [4],
     #                 c1=64,
     #             h1_out_factor=1,
     #             h2_out_factor=2)
 
-
-    train_model(setname='nyu',
-                source_name='_iter1_patch_derot_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm9900_lm1038_yt0_ep2020',
-                lamda = 0.01,
-                batch_size = 100,
-                jnt_idx = [4],
-                    c1=64,
-                h1_out_factor=1,
-                h2_out_factor=2)
-
-
+    #
     # train_model(setname='icvl',
-    #             source_name='_recur1_patch_uvd_derot_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm0_lm2000_yt0_ep2380',
+    #             dataset_path_prefix=constants.Data_Path,
+    #             source_name='_iter0_patch_uvd_bw_r012_21jnts_c0016_c0132_c1016_c1132_c2016_c2132_h12_h24_gm5051_lm2000_yt0_ep2450',
     #             lamda = 0.001,
     #             batch_size = 100,
-    #             jnt_idx = [5],
+    #             jnt_idx = [0],
     #                 c1=64,
     #             h1_out_factor=2,
     #             h2_out_factor=2)

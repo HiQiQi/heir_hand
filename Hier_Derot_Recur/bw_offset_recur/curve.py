@@ -3,8 +3,9 @@ __author__ = 'QiYE'
 import numpy
 import cPickle
 import matplotlib.pyplot as plt
-save_path = '../../../data/nyu/hier_derot_recur/bw_offset/'
-model_save_path = "%sparam_cost_uvd_bw0_r012_egoff2_c0064_h11_h22_gm0_lm9999_yt0_ep540.npy"%save_path
+from src.utils import constants
+save_path = '%sdata/msrc/hier_derot_recur/bw_offset/'%constants.Data_Path
+model_save_path = "%sparam_cost_uvd_bw5_r012_egoff2_c0064_h11_h22_gm0_lm3000_yt0_ep1440.npy"%save_path
 
 model_info = numpy.load(model_save_path)
 train_cost = numpy.array(model_info[-2][1:-1])

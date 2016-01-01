@@ -1,12 +1,11 @@
 __author__ = 'QiYE'
 
 import numpy
-
+from src.utils import constants
 import matplotlib.pyplot as plt
-save_path = '../../data/nyu/whole_derot/'
-# save_path = '../../data/icvl/whole/'
-# save_path = '../../data/icvl/whole_derot/'
-model_save_path = "%sparam_cost_whole_derot_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep910.npy"%save_path
+save_path = '%sdata/icvl/whole_derot/'%constants.Data_Path
+
+model_save_path = "%sparam_cost_whole_derot_21jnts_r012_conti_c0032_c0164_c1032_c1164_c2032_c2164_h18_h232_gm0_lm400_yt0_ep1800.npy"%save_path
 model_info = numpy.load(model_save_path)
 
 train_cost = numpy.array(model_info[-2][1:-1])
@@ -35,8 +34,8 @@ plt.ylim(ymin=0.1,ymax=1)
 plt.xlim(xmin=1,xmax=x_axis)
 plt.plot(numpy.arange(1,x_axis,1),train_cost[0:x_axis-1,], 'blue')
 plt.plot(numpy.arange(1,x_axis,1),test_cost[0:x_axis-1,], 'red')
-# plt.xscale('log')
-# plt.yscale('log')
+plt.xscale('log')
+plt.yscale('log')
 plt.grid('on','minor')
 plt.tick_params(which='minor' )
 
